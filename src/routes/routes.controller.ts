@@ -10,19 +10,22 @@ import {
 import { RoutesService } from './routes.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
+import { RouteSerializer } from './entities/route.serializer';
 
 @Controller('routes')
 export class RoutesController {
   constructor(private readonly routesService: RoutesService) {}
 
   @Post()
-  create(@Body() createRouteDto: CreateRouteDto) {
-    return this.routesService.create(createRouteDto);
+  async create(@Body() createRouteDto: CreateRouteDto) {
+    const route = await this.routesService.create(createRouteDto);
+    return new RouteSerializer(route);
   }
 
   @Get()
-  findAll() {
-    return this.routesService.findAll();
+  async findAll() {
+    const routes = await this.routesService.findAll();
+    return routes.map((route) => new RouteSerializer(route));
   }
 
   @Get(':id')
